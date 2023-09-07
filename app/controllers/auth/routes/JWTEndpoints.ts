@@ -1,8 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import UserAuthInfo from '../../../models/auth/userAuthInfo'
-import tokenResponse from '../../../models/auth/tokenResponse'
-import Token from "../../../auth/token"
+import { loginRequst, tokenResponse, userEncodedInfo } from '../../../models/auth/authModels'
+import Token from '../../../auth/token'
 
 const router = express.Router()
 
@@ -16,17 +15,29 @@ router.post("/login", jsonParser,(req, res) => {
     console.log(req.body)
 
     try {
-        // const returnToken = Token.createJWT()
+        const loginInfo:loginRequst = req.body;
+
+        // all below logic should be put in the createToken method?? or a new controlling login "class"? or could be put here
+        // the next step is it should pass the login info through several layers
+        // layer 1: should check to make sure it is a valid password that matches the email
+        // Layer 2: should make a db call that gets the rest of the data for userEncodedInfo
+        // Layer 3 - built: takes userEncodedInfo and returns a jwtResponse including token
+
     }
     catch {
         console.log("oopsie error joe mama")
-        
     }
 
 })
 
-router.get("/test", (req, res) => {
-    res.send("test")
+
+// used to test various random things
+router.post("/testGen", (req, res) => {
+    const userInfo:userEncodedInfo = req.body;
+
+    const jwt:tokenResponse = Token.createJWT(userInfo);
+
+    res.send(jwt)
 })
 
 
