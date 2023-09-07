@@ -20,6 +20,7 @@ router.post("/login", jsonParser,(req, res) => {
     }
     catch {
         console.log("oopsie error joe mama")
+        
     }
 
 })
