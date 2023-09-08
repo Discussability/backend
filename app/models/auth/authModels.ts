@@ -20,7 +20,7 @@ interface loginRequst {
 
 interface userAuthInfo {
     userId:string;
-    userName:string;
+    username:string;
     email:string;
     password:string;
 }
@@ -31,7 +31,7 @@ interface userAuthInfo {
 
 interface userEncodedInfo {
     userId:string,
-    userName:string
+    username:string
 }
 
 

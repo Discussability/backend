@@ -1,4 +1,4 @@
-import express from 'express'
+import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
 import { loginRequst, tokenResponse, userEncodedInfo } from '../../../models/auth/authModels'
 import Token from '../../../auth/token'
@@ -32,12 +32,15 @@ router.post("/login", jsonParser,(req, res) => {
 
 
 // used to test various random things
-router.post("/testGen", (req, res) => {
+router.post("/testGen", (req:Request, res:Response) => {
     const userInfo:userEncodedInfo = req.body;
-
-    const jwt:tokenResponse = Token.createJWT(userInfo);
+    const jwt:tokenResponse = Token.createToken(userInfo);
 
     res.send(jwt)
+})
+
+router.get("/testUser", Token.authenticateToken, (req, res) => {
+    res.send(req.body.user)
 })
 
 

@@ -1,10 +1,10 @@
 require("dotenv").config()
 const jwt = require('jsonwebtoken')
-import express, { NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { userAuthInfo, tokenResponse, userEncodedInfo } from "../models/auth/authModels";
 
 const Token = {
-    createJWT: function (userInfo:userEncodedInfo):tokenResponse {
+    createToken: function (userInfo:userEncodedInfo):tokenResponse {
 
         const token = jwt.sign(userInfo, process.env.PRIMARY_GEN_KEY)
 
@@ -20,7 +20,7 @@ const Token = {
         
     },
 
-    authenticateToken(req:any, res:any, next:any) {
+    authenticateToken: function authenticateToken(req:Request, res:Response, next:NextFunction) {
         const requestHeader = req.headers['authorization']
         const token = requestHeader && requestHeader.split(" ")[1]
 
@@ -29,7 +29,7 @@ const Token = {
         jwt.verify(token, process.env.PRIMARY_GEN_KEY, (err:Error, user:userEncodedInfo) => {
             if (err) return res.sendStatus(401);
 
-            req.user = user;
+            req.body.user = user;
             next()
         })
     }
