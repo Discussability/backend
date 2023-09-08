@@ -30,11 +30,15 @@ router.post("/login", jsonParser,(req, res) => {
 
 })
 
+router.post('/refresh', (req:Request, res:Response) => {
+    res.send(Token.refreshToken(req.body.token));
+})
+
 
 // used to test various random things
 router.post("/testGen", (req:Request, res:Response) => {
     const userInfo:userEncodedInfo = req.body;
-    const jwt:tokenResponse = Token.createToken(userInfo);
+    const jwt:tokenResponse = Token.createTokenPair(userInfo);
 
     res.send(jwt)
 })

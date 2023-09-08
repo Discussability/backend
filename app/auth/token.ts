@@ -3,10 +3,12 @@ const jwt = require('jsonwebtoken')
 import express, { Request, Response, NextFunction } from "express";
 import { userAuthInfo, tokenResponse, userEncodedInfo } from "../models/auth/authModels";
 
-const Token = {
-    createToken: function (userInfo:userEncodedInfo):tokenResponse {
+const TOKEN_SETTINGS:{} = {expiresIn: '20s'}
 
-        const token = jwt.sign(userInfo, process.env.PRIMARY_GEN_KEY)
+const Token = {
+    createTokenPair: function (userInfo:userEncodedInfo):tokenResponse {
+
+        const token = jwt.sign(userInfo, process.env.PRIMARY_GEN_KEY,TOKEN_SETTINGS)
 
         // should be stored on db to make sure refresh token is valid
         const refresh = jwt.sign(userInfo, process.env.REFRESH_GEN_KEY)
@@ -18,6 +20,27 @@ const Token = {
 
         return response;
         
+    },
+
+    refreshToken: function(refreshToken:string):tokenResponse | Error {
+        //TODO needs to check if token is a valid refresh token in db
+
+        // if it is return a new token response
+        const response = jwt.verify(refreshToken, process.env.REFRESH_GEN_KEY, (err:Error, user:userEncodedInfo) => {
+            const userInfo:userEncodedInfo = {
+                userId: user.userId,
+                username: user.username
+            }
+            const newToken = jwt.sign(userInfo, process.env.PRIMARY_GEN_KEY, TOKEN_SETTINGS);
+            
+            return {
+                token: newToken,
+                refreshToken: refreshToken
+            }
+        })
+
+        return response;
+
     },
 
     authenticateToken: function authenticateToken(req:Request, res:Response, next:NextFunction) {
